@@ -1,7 +1,7 @@
 import os
 
 import pandas as pd
-import model.scraper as scraper
+import src.scraper as scraper
 import traceback
 import re
 
@@ -13,8 +13,8 @@ last_page_to_process = 4
 
 counter = 0
 
-games = pd.read_csv('./games.csv', encoding='UTF-8', index_col='id')
-scores = pd.read_csv('./scores.csv', encoding='UTF-8', index_col=['game_id','place'])
+games = pd.read_csv('data/games.csv', encoding='UTF-8', index_col='id')
+scores = pd.read_csv('data/scores.csv', encoding='UTF-8', index_col=['game_id', 'place'])
 
 
 def save_info(game_info):
@@ -114,11 +114,11 @@ def scrape_pages_with_results():
 
     write_to_csv()
 
-    os.remove('./games.csv')
-    os.rename('./games.new.csv', './games.csv')
+    os.remove('data/games.csv')
+    os.rename('./games.new.csv', 'data/games.csv')
 
-    os.remove('./scores.csv')
-    os.rename('./scores.new.csv', './scores.csv')
+    os.remove('data/scores.csv')
+    os.rename('./scores.new.csv', 'data/scores.csv')
 
 
 def write_to_csv():

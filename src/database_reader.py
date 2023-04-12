@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-games = pd.read_csv('../games.csv', encoding='UTF-8')
-scores = pd.read_csv('../scores.csv', encoding='UTF-8')
+games = pd.read_csv('../data/games.csv', encoding='UTF-8')
+scores = pd.read_csv('../data/scores.csv', encoding='UTF-8')
 
 merged_df = pd.merge(scores, games, how='inner', left_on='game_id', right_on='id')
 del merged_df['id']
