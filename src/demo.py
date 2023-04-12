@@ -1,10 +1,7 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import database_reader
-import pandas as pd
-from database_reader import offline_df
 
+from database_reader import offline_df
 
 data = offline_df.loc[(53576,), :]
 all_scores = data.loc[:, 'round_1':'round_7']
@@ -14,6 +11,9 @@ highlighted_team_name = 'Давайте ещё немного подумаем'
 
 num_teams = 8
 bar_width = 0.8 / num_teams
+
+current_q_set_avg_by_round = offline_df.loc[list(offline_df.groupby('question_set').groups.keys())[:]].loc[:,
+                             'round_1':'round_7'].mean()
 
 # Создаем столбчатый график для вашей команды
 # for i, score in enumerate(all_scores):

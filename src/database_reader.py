@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 games = pd.read_csv('../data/games.csv', encoding='UTF-8')
 scores = pd.read_csv('../data/scores.csv', encoding='UTF-8')
 
@@ -9,6 +8,7 @@ del merged_df['id']
 
 merged_df = merged_df.set_index(['game_id', 'place'])
 merged_df = merged_df.sort_values(by=['game_id', 'place'])
+
 
 def get_games(game_title=None):
     result = merged_df
@@ -25,7 +25,9 @@ def filter_by_title(df, title):
 
 def avg_score_of_teams_played_more_than_n_games(df, n):
     # last n games (if any) with final scores
-    last_n_games = df.sort_values('game_id').groupby('team_name').tail(n).sort_values('team_name').filter(['team_name', 'final_score'])
+    last_n_games = df.sort_values('game_id').groupby('team_name').tail(n).sort_values('team_name').filter(
+        ['team_name', 'final_score']
+    )
     # drop teams that played less than n games
     only_teams_played_more_than_n_games = last_n_games.groupby('team_name').filter(lambda games: len(games) >= n)
     # avg of last n games for each team suitable team
@@ -57,19 +59,5 @@ def color_by_rarity(team_name):
         return avg, '#bebebe'  # common
 
 
-
-
-
-# def get_top_avg_scores_
-# df_filtered.sort_values('game_id').groupby('team_name').tail(5).groupby('team_name')['final_score'].mean().round(2)
-# print(scores.head())
-# print(merged_df.head(n = 50).to_csv())
-
 offline_df = filter_by_title(merged_df, 'Квиз, плиз! SPB')
 avg = avg_score_of_teams_played_more_than_n_games(offline_df, 5)
-# print(avg.head(100))
-# final_score_t2_g2 = merged_df.loc[(53576, 'Давайте ещё немного подумаем'), 'final_score'].item()
-# print(final_score_t2_g2)
-
-# def get_
-
