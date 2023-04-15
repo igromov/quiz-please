@@ -27,6 +27,11 @@ column_types = {
     'final_score': 'float64'
 }
 
+SCORES_CSV_BACKUP = '../scores.new.csv'
+SCORES_CSV = '../data/scores.csv'
+GAMES_CSV_BACKUP = '../games.new.csv'
+GAMES_CSV = '../data/games.csv'
+
 
 class GameInfo:
     def __init__(self,
@@ -56,7 +61,7 @@ def extract_game_id(url: str):
     return int(re.findall('\\?id=(\\d+)', url)[0])
 
 
-def get_pager_urls(starting_filter_url, last_page):
+def get_pager_urls(starting_filter_url, pages_to_parse, total_page_count, parse_all_pages):
     page_pattern = '&page=(\\d+)'
 
     if len((s := re.findall(page_pattern, starting_filter_url))) > 0:
@@ -64,12 +69,39 @@ def get_pager_urls(starting_filter_url, last_page):
     else:
         starting_page = 1
 
+    if parse_all_pages:
+        last_page = total_page_count
+    else:
+        last_page = starting_page + pages_to_parse
+
     print(f'Pager: start: {starting_page}, end: {last_page}')
 
     return [re.sub(page_pattern, f'&page={page}', starting_filter_url) for page in range(starting_page, last_page + 1)]
 
 
-SCORES_CSV_BACKUP = '../scores.new.csv'
-SCORES_CSV = '../data/scores.csv'
-GAMES_CSV_BACKUP = '../games.new.csv'
-GAMES_CSV = '../data/games.csv'
+rarity_heat_map = {
+    'legendary': '#ff222b',
+    'epic': '#ff9e0f',
+    'rare': '#55c8ff',
+    'uncommon': '#72e240',
+    'common': '#bebebe'
+}
+
+
+# https://cdnb.artstation.com/p/assets/images/images/055/842/959/large/jean-go-skinrarity-colorcode.jpg?1667878604
+def color_by_rarity(avg_df, team_name):
+    if team_name not in avg_df.index:
+        return None, '#bebebe'
+
+    avg = avg_df.at[team_name, 'final_score']
+
+    if avg >= 42:
+        return avg, rarity_heat_map['legendary']
+    elif 37 <= avg < 42:
+        return avg, rarity_heat_map['epic']
+    elif 35 <= avg < 37:
+        return avg, rarity_heat_map['rare']
+    elif 33 <= avg < 35:
+        return avg, rarity_heat_map['uncommon']
+    elif avg < 33:
+        return avg, rarity_heat_map['common']
