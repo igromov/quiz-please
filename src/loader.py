@@ -1,9 +1,9 @@
 import argparse
-import os
+import shutil
 import traceback
 
 import src.scraper as scraper
-from utils import *
+from src.utils import *
 
 base_url = 'https://quizplease.ru'
 single_game_url = 'https://quizplease.ru/game-page?id='
@@ -67,15 +67,9 @@ def save_data_from_pager(args):
 
     write_to_csv()
 
-    os.remove(GAMES_CSV)
-    os.rename(GAMES_CSV_BACKUP, GAMES_CSV)
-
-    os.remove(SCORES_CSV)
-    os.rename(SCORES_CSV_BACKUP, SCORES_CSV)
-
 
 def save_game(game_id):
-    full_game_url = single_game_url + str(single_game_id)
+    full_game_url = single_game_url + str(game_id)
     try:
         print(f'Getting game info: {full_game_url}')
         game_info = scraper.get_game_info(full_game_url)
@@ -92,8 +86,15 @@ def write_to_csv():
     print(f"Saving to csv, games: {games.size} entries, scores: {scores.size} entries")
     games.sort_index(inplace=True)
     scores.sort_index(inplace=True)
-    games.to_csv(GAMES_CSV_BACKUP)
-    scores.to_csv(SCORES_CSV_BACKUP)
+    games.to_csv(GAMES_CSV)
+    scores.to_csv(SCORES_CSV)
+
+
+def back_up_db():
+    print("Backup started...")
+    shutil.copy(GAMES_CSV, GAMES_CSV_BACKUP)
+    shutil.copy(SCORES_CSV, SCORES_CSV_BACKUP)
+    print(f"Backup complete: {GAMES_CSV_BACKUP}, {SCORES_CSV_BACKUP}")
 
 
 if __name__ == "__main__":
@@ -103,14 +104,16 @@ if __name__ == "__main__":
 
     group.add_argument('-s', '--single', type=int, default=None, help='ID of a single game to be parsed and saved')
     group.add_argument('-f', '--filter',
-                       default='https://quizplease.ru/schedule-past?QpGameSearch%5BcityId%5D=17&QpGameSearch%5Bmonth%5D=0&QpGameSearch%5Btype%5D=1&QpGameSearch%5Bbars%5D=all',
-                       help='Filter URL, like https://quizplease.ru/schedule-past?QpGameSearch%5BcityId%5D=17&QpGameSearch%5Bmonth%5D=0&QpGameSearch%5Btype%5D=1&QpGameSearch%5Bbars%5D=all')
+                       default='https://quizplease.ru/schedule-past?QpGameSearch%5BcityId%5D=17&QpGameSearch%5Bmonth%5D=0&QpGameSearch%5Btype%5D=1&QpGameSearch%5Bbars%5D=all&page=1',
+                       help='Filter URL, like https://quizplease.ru/schedule-past?QpGameSearch%5BcityId%5D=17&QpGameSearch%5Bmonth%5D=0&QpGameSearch%5Btype%5D=1&QpGameSearch%5Bbars%5D=all&page=1')
     group.add_argument('-n', '--number-of-pages', dest='pages', type=int, default=3, help='Number of pages to parse')
     group.add_argument('-a', '--all', help='Parse all pages of the specified filter', action="store_true")
 
     args = parser.parse_args()
 
     print(vars(args))
+    
+    back_up_db()
 
     single_game_id = args.single
     if single_game_id is not None:

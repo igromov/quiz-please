@@ -27,9 +27,9 @@ column_types = {
     'final_score': 'float64'
 }
 
-SCORES_CSV_BACKUP = '../scores.new.csv'
+SCORES_CSV_BACKUP = '../data/scores.backup.csv'
 SCORES_CSV = '../data/scores.csv'
-GAMES_CSV_BACKUP = '../games.new.csv'
+GAMES_CSV_BACKUP = '../data/games.backup.csv'
 GAMES_CSV = '../data/games.csv'
 
 
@@ -65,7 +65,7 @@ def get_pager_urls(starting_filter_url, pages_to_parse, total_page_count, parse_
     page_pattern = '&page=(\\d+)'
 
     if len((s := re.findall(page_pattern, starting_filter_url))) > 0:
-        starting_page = s[0]
+        starting_page = int(s[0])
     else:
         starting_page = 1
 
@@ -80,11 +80,11 @@ def get_pager_urls(starting_filter_url, pages_to_parse, total_page_count, parse_
 
 
 rarity_heat_map = {
-    'legendary': '#ff222b',
-    'epic': '#ff9e0f',
-    'rare': '#55c8ff',
-    'uncommon': '#72e240',
-    'common': '#bebebe'
+    'legendary': ('#ff222b', "Legendary team"),
+    'epic': ('#ff9e0f', "Epic team"),
+    'rare': ('#55c8ff', "Rare team"),
+    'uncommon': ('#72e240', "Uncommon team"),
+    'common': ('#bebebe', "Common team")
 }
 
 
@@ -95,13 +95,17 @@ def color_by_rarity(avg_df, team_name):
 
     avg = avg_df.at[team_name, 'final_score']
 
+    rarity = 'common'
+
     if avg >= 42:
-        return avg, rarity_heat_map['legendary']
+        rarity = 'legendary'
     elif 37 <= avg < 42:
-        return avg, rarity_heat_map['epic']
+        rarity = 'epic'
     elif 35 <= avg < 37:
-        return avg, rarity_heat_map['rare']
+        rarity = 'rare'
     elif 33 <= avg < 35:
-        return avg, rarity_heat_map['uncommon']
-    elif avg < 33:
-        return avg, rarity_heat_map['common']
+        rarity = 'uncommon'
+
+    color_hex, display_name = rarity_heat_map[rarity]
+
+    return avg, color_hex

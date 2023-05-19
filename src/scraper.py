@@ -2,7 +2,7 @@ import urllib.request
 
 from lxml import etree
 
-from utils import *
+from src.utils import *
 
 
 def _read_html(url):
