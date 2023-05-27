@@ -49,7 +49,7 @@ def load_if_necessary(game_id):
         save_game(game_id)
 
 
-offline_games_df = filter_by_title(merged_df, 'Квиз, плиз! SPB')
+offline_games_df:pd.DataFrame = filter_by_title(merged_df, 'Квиз, плиз! SPB')
 avg_last_5_offline = avg_score_of_teams_played_more_than_n_games(offline_games_df, 5)
 avg_last_5_or_less_offline = avg_score_of_last_n_games(offline_games_df, 5)
 avg = avg_score_of_teams_played_more_than_n_games(offline_games_df, 1)
