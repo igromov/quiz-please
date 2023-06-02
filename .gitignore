@@ -1,4 +1,3 @@
 .idea/**
 /data/*.backup.csv
-src/__pycache__/gamedb.cpython-311.pyc
-src/__pycache__/utils.cpython-311.pyc
+**/__pycache__/**
