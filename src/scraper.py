@@ -30,7 +30,7 @@ def get_game_info(url):
     location = game_meta_node[0].xpath('div[3]/div/div')[0].text
     title = html.xpath('//*[@class="game-heading-info"]/h1[1]')[0].text
     question_set_raw = html.xpath('//*[@class="game-heading-info"]/h1[2]')[0].text
-    question_set = question_set_raw.replace('#', '') if question_set_raw.startswith('#') else ''
+    question_set = question_set_raw.replace('#', '') if question_set_raw is not None and question_set_raw.startswith('#') else ''
     date = game_date_raw + '/' + game_dow_time_raw  # TODO
 
     return GameInfo(extract_game_id(url), scores, location, title, date, question_set)
